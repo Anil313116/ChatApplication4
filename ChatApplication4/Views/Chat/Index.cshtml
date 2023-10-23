@@ -1,0 +1,138 @@
+﻿@page
+@model ChatHub
+ 
+ 
+<!-- Add a reference to Bootstrap CSS if you haven't already -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!-- Add a reference to Bootstrap CSS if you haven't already -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    /* Add custom styles for background image */
+    body {
+        background-image: url('your-background-image.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    /* Add custom styles for chat container */
+    .chat-container {
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="userInput">User:</label>
+                <!-- Check if the username is not null before using it -->
+                <!-- Check if ViewData["SessionData"] is not null before using it -->
+                <!-- Check if the username is not null before using it -->
+                @if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Id")))
+                {
+                    <input id="userInput" class="form-control" readonly value="@HttpContext.Session.GetString("Id")" />
+                }
+                else
+                {
+                    <p>Session Data is not available.</p>
+                }
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="messageInput">Message:</label>
+                <input id="messageInput" class="form-control" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <button id="sendButton" class="btn btn-primary">Send</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ul id="chatMessages" class="list-group"></ul>
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+    .chat-message {
+        padding: 10px;
+        margin-bottom: 5px;
+    }
+
+    .user-message {
+        background-color: #d1ecf1;
+        border-radius: 10px;
+        float: right;
+    }
+
+    .other-message {
+        background-color: #f8d7da;
+        border-radius: 10px;
+        float: left;
+    }
+</style>
+<!-- Include Font Awesome for icons -->
+<script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
+
+<script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+    connection.start().then(function () {
+        // Connection established
+    }).catch(function (err) {
+        console.error(err.toString());
+    });
+
+    connection.on("ReceiveMessage", function (user, message) {
+        var encodedUser = user;
+        var encodedMessage = message;
+
+        var li = document.createElement("li");
+        li.textContent = encodedUser + " says: " + encodedMessage;
+        li.className = "list-group-item chat-message";
+
+        // Add user or other message class for styling
+        if (user === "You") {
+            li.classList.add("user-message");
+        } else {
+            li.classList.add("other-message");
+        }
+
+        document.getElementById("chatMessages").appendChild(li);
+    });
+
+    document.getElementById("sendButton").addEventListener("click", function (event) {
+        var user = document.getElementById("userInput").value;
+        var message = document.getElementById("messageInput").value;
+
+        connection.invoke("SendMessage", user, message).catch(function (err) {
+            console.error(err.toString());
+        });
+
+        event.preventDefault();
+    });
+</script>

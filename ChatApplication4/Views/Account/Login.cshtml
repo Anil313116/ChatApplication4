@@ -1,0 +1,32 @@
+﻿@model ChatApplication4.Models.CustomUser
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+<div class="container-fluid" style="background-image: url('your-background-image.jpg'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;">
+    <div class="row justify-content-center">
+        <div class="col-md-4 mt-5">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Login</h2>
+                    <form asp-controller="Account" asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Username"><i class="fas fa-user-tie card-shadow"></i>Username</label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Password"><i class="fas fa-virus card-shadow"></i> Password</label>
+                            <input asp-for="Password" type="password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <br/>
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
+                    <div class="form-group mt-3 text-center">
+                        <p>Don't have an account? <a asp-action="Register" asp-controller="Account">Register</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
