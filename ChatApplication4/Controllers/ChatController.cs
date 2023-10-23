@@ -19,6 +19,7 @@ namespace ChatApplication4.Controllers
             }
 
             return View();
+
         }
 
 
