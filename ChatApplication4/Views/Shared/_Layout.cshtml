@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿
+
+
+<!DOCTYPE html>
+
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -10,26 +15,67 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 btn btn-info">
-            <div class="container-fluid btn btn-warning">
-                <a class="navbar-brand btn btn-danger card text-info" asp-area="" asp-controller="Home" asp-action="Index">Community Chat</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between ">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item navbar-brand btn btn-danger card text-info">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">User Registeration</a>
+
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h4 class="card-title text-info">Community Chat</h4>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="text-white btn-warning btn btn-danger  shadow shadow-lg  align-content-end" asp-area="" asp-controller="Account" asp-action="Register">User Registration</a>
                         </li>
-                       @* <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>*@
                     </ul>
+
+                    <div class="toast-container align-content-md-end">
+                        @if (ViewBag.NotificationMessage == null)
+                        {
+
+                        }
+                        else
+                        {
+                            <div>
+                                <span class="welcome-text">Welcome, @ViewBag.NotificationMessage !!</span>
+
+                                @if (!string.IsNullOrEmpty(ViewBag.PicPath))
+
+                                {
+
+                                    <img src="@Url.Content(@ViewBag.PicPath)" alt="Profile Picture" width="800" height="500" />
+
+                                }
+
+                                <!-- Add your Sign Out button here with custom styling -->
+                                <a class="btn btn-danger ml-3" href="signout-url" style="color: #fff; background-color: #dc3545;">Sign Out</a>
+
+                            </div>
+                        }
+                    </div>
+
+
                 </div>
             </div>
         </nav>
     </header>
+
+    <style>
+        .welcome-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff; /* Blue color */
+        }
+    </style>
+
+
+
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

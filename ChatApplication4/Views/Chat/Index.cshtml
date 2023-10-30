@@ -1,5 +1,9 @@
 ﻿@page
 @model ChatHub
+@using Microsoft.AspNetCore.Http
+
+ 
+
  
  
 <!-- Add a reference to Bootstrap CSS if you haven't already -->
@@ -33,14 +37,10 @@
                 <!-- Check if the username is not null before using it -->
                 <!-- Check if ViewData["SessionData"] is not null before using it -->
                 <!-- Check if the username is not null before using it -->
-                @if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Id")))
-                {
-                    <input id="userInput" class="form-control" readonly value="@HttpContext.Session.GetString("Id")" />
-                }
-                else
-                {
-                    <p>Session Data is not available.</p>
-                }
+                @*<input type="hidden" id="username" value="@username" />*@
+
+                <input id="userInput" class="form-control" readonly value="@ViewBag.NotificationMessage" />
+                
             </div>
         </div>
         <div class="col-md-8">
@@ -99,6 +99,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
 
 <script>
+    
+
+
     var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
     connection.start().then(function () {
@@ -135,4 +138,23 @@
 
         event.preventDefault();
     });
+
+    
 </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="/lib/notyf.min.js"></script>
+<script>
+    const notyf = new Notyf({ position: { x: 'center', y: 'top' } });
+
+    const notificationMessage = "@ViewBag.NotificationMessage";
+    if (notificationMessage) {
+        notyf.success(notificationMessage);
+    }
+</script>
+ 
+
+
+
+

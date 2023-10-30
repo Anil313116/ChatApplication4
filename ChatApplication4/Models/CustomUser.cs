@@ -6,5 +6,7 @@
         public string Username { get; set; }
         public string Password { get; set; }
         public string Role { get; set; } // Doctor, Engineer, Politician, etc.
+        public string ProfilePicture { get; set; } // Add this property for profile picture file path
+
     }
 }
