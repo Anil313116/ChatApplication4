@@ -1,19 +1,21 @@
 ﻿@page
-@model ChatHub
+@model IEnumerable<ChatApplication4.Models.CustomUser>
+
 @using Microsoft.AspNetCore.Http
 
- 
+<!-- Add a reference to Bootstrap CSS if you haven't already -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojipicker.js">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojipicker.js">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
 
- 
- 
-<!-- Add a reference to Bootstrap CSS if you haven't already -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<!-- Add a reference to Bootstrap CSS if you haven't already -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+
 <style>
     /* Add custom styles for background image */
     body {
-        background-image: url('your-background-image.jpg');
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
@@ -27,55 +29,97 @@
         margin: 20px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     }
+
+    .user-list {
+        background-color: grey;
+        border-radius: 10px;
+        /* Add other styles for your online users panel */
+    }
+
+    /* Add CSS styles for the user icon */
+    .user-element {
+        display: flex;
+        align-items: center;
+    }
+
+        .user-element i {
+            margin-right: 5px; /* Adjust the margin as needed */
+        }
+
+    .indian-flag-icon {
+        width: 5px; /* Adjust the width as needed */
+        height: 5px; /* Adjust the height as needed */
+    }
 </style>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="userInput">User:</label>
-                <!-- Check if the username is not null before using it -->
-                <!-- Check if ViewData["SessionData"] is not null before using it -->
-                <!-- Check if the username is not null before using it -->
-                @*<input type="hidden" id="username" value="@username" />*@
+<div id="chat-container" style="display: flex;">
+    <div id="user-list" class="user-list" style="background-color:grey; padding: 50px; height:auto;">
+        <!-- Display the list of online users on the side panel -->
 
-                <input id="userInput" class="form-control" readonly value="@ViewBag.NotificationMessage" />
-                
+        <h4>Online Users</h4>
+        <div id="userName" class="btn btn-light">
+            <!-- User names will be displayed here via Ajax -->
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <!-- Message input and chat messages go here -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="userInput">User:</label>
+                    <input id="userInput" class="form-control" readonly value="@ViewBag.NotificationMessage" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="messageInput">Message:</label>
+                    <div class="input-group">
+                        <input id="messageInput" class="form-control" />
+                        <div class="input-group-append">
+                            <button id="emojiPickerButton" class="btn btn-secondary">
+                                <i class="fa fa-smile"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-8">
-            <div class="form-group">
-                <label for="messageInput">Message:</label>
-                <input id="messageInput" class="form-control" />
+
+        <div class="row">
+            <div class="col-md-12">
+                <button id="sendButton" class="btn btn-primary">Send &nbsp; <i class="fa fa-paper-plane"></i></button>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <button id="sendButton" class="btn btn-primary">Send</button>
+        <div class="row">
+            <div class="col-md-12">
+                <hr />
+            </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <hr />
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <ul id="chatMessages" class="list-group"></ul>
+        <div class="row">
+            <div class="col-md-12">
+                <ul id="chatMessages" class="list-group"></ul>
+            </div>
         </div>
     </div>
 </div>
 
 
+<div class="container">
+</div>
 
 <style>
+    .chat-partner-image {
+        width: 50px;
+        height: 50px;
+    }
+
     .chat-message {
         padding: 10px;
         margin-bottom: 5px;
+        clear: both;
     }
 
     .user-message {
@@ -89,19 +133,17 @@
         border-radius: 10px;
         float: left;
     }
+
+    
+     
 </style>
+
+
 <!-- Include Font Awesome for icons -->
 <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
-
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
 
 <script>
-    
-
-
     var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
     connection.start().then(function () {
@@ -115,13 +157,22 @@
         var encodedMessage = message;
 
         var li = document.createElement("li");
-        li.textContent = encodedUser + " says: " + encodedMessage;
         li.className = "list-group-item chat-message";
 
-        // Add user or other message class for styling
         if (user === "You") {
             li.classList.add("user-message");
         } else {
+            var img = document.createElement("img");
+            img.src = "https://img.freepik.com/premium-psd/male-customer-service-3d-cartoon-avatar-portrait_627936-27.jpg";
+            img.alt = encodedUser;
+            img.classList.add("chat-partner-image");
+
+            li.appendChild(img);
+
+            var messageContent = document.createElement("span");
+            messageContent.textContent = encodedUser + " says: " + encodedMessage;
+
+            li.appendChild(messageContent);
             li.classList.add("other-message");
         }
 
@@ -139,22 +190,99 @@
         event.preventDefault();
     });
 
-    
+    // Initialize the emoji picker
+    const messageInput = document.getElementById("messageInput");
+    const emojiPickerButton = document.getElementById("emojiPickerButton");
+    const emojiPicker = new EmojiPicker();
+
+    emojiPicker.init({
+        emojiable_selector: "#messageInput",
+        assetsPath: "https://cdnjs.cloudflare.com/ajax/libs/emojipicker.js/0.6.0/img",
+        popupButtonClasses: "fa fa-smile",
+    });
+
+    emojiPickerButton.addEventListener("click", function () {
+        alert('emoji');
+        emojiPicker.toggle();
+    });
+
+
+
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/lib/notyf.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- ... (your existing HTML code) ... -->
 
-<script src="/lib/notyf.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const notyf = new Notyf({ position: { x: 'center', y: 'top' } });
+    $(document).ready(function () {
+        // Make an Ajax call to fetch the user names and roles from the controller
+        $.ajax({
+            type: "GET",
+            url: "/Users/GetUserName", // Update the URL as needed
+            success: function (data) {
+                var userNameDiv = $("#userName");
+                debugger;
 
-    const notificationMessage = "@ViewBag.NotificationMessage";
-    if (notificationMessage) {
-        notyf.success(notificationMessage);
-    }
+                // Loop through the user names and roles and display them
+                for (var i = 0; i < data.userName.length; i++) {
+                    // Create a <div> element to hold the user icon, name, and role
+                    var userElement = $("<div class='user-element'></div>");
+                    if (data.gender[i] == "Female") {
+                        var userIcon = $("<i class='fa fa-female' style='font-size:24px'></i>");
+                        data.gender[i] = "F";
+                    }
+                    else {
+                        var userIcon = $("<i class='fa fa-user'></i>");
+                        data.gender[i] = "M";
+                    }
+
+
+                    // Create an icon element (adjust the icon class or source as needed)
+
+                    // Create an element for the Indian flag (an emoji or image)
+                    //var indianFlagElement = $("<span>&#x1F1EE;&#x1F1F3;</span>"); // Use the Indian flag emoji (🇮🇳) or an image
+                    // Create an image element for the Indian flag
+                    //var indianFlagImage = $("<div class='indian-flag-icon'><img src='https://th.bing.com/th/id/R.4518a8015ec08923acee245d10dd8507?rik=ovAjUeGWL2%2bN2Q&riu=http%3a%2f%2fclipart-library.com%2fnewimages%2findian-flag-png-3.jpg&ehk=hXAlQpQ%2fC6qNj9KewQ4zu6hRTDajwjZTTTB%2fjhgSGaQ%3d&risl=&pid=ImgRaw&r=0' alt='Indian Flag'></div>"); // Replace 'indian-flag.png' with your image source
+
+
+                    // Create a span for the username and role
+                    var userNameSpan = $("<span class='btn btn-success'>" + data.userName[i] + "</span><br>");
+                    // Create a span for the username and role
+                    var userGenderLocationSpan = $("<span class='btn btn-secondary'>" + data.gender[i] + "," + data.location + " </span>");
+
+                    // Append the icon, username, and role to the user element
+                    userElement.append(userIcon);
+                    userElement.append(userNameSpan);
+
+                    userElement.append(userGenderLocationSpan);
+
+                    // Append the user element to the user name div
+                    userNameDiv.append(userElement);
+                    ///userElement.append(indianFlagImage);
+                    userNameDiv.append("<br>"); // Add a line break
+                }
+            },
+            error: function () {
+                // Handle errors if the Ajax call fails
+                $("#userName").text("Unable to fetch user names and roles.");
+            }
+        });
+
+
+        // Add a click event handler for user elements
+        $("#userName").on("click", ".user-element", function () {
+            var clickedUserName = $(this).find("span").text();
+
+            // Set the clicked user as the target for the message
+            $("#userInput").val(clickedUserName);
+        });
+    });
+
+
+
 </script>
- 
 
-
-
-
+<!-- ... (the rest of your HTML and JavaScript code) ... -->

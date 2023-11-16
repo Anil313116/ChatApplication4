@@ -1,0 +1,33 @@
+﻿<!-- Your HTML for the video call interface -->
+<div id="video-call">
+    <video id="localVideo" autoplay></video>
+    <video id="remoteVideo" autoplay></video>
+    <button id="startCall">Start Call</button>
+    <button id="endCall">End Call</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/signalr/3.1.10/signalr.min.js"></script>
+<script src="/js/video-call.js"></script>
+<script>
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/videoChatHub")
+        .build();
+
+    // Set up WebRTC here to handle video and audio streams
+
+    connection.on("ReceiveSignal", (user, signal) => {
+        // Handle incoming signaling data
+    });
+
+    document.getElementById("startCall").addEventListener("click", () => {
+        // Start the call, set up the WebRTC connection
+    });
+
+    document.getElementById("endCall").addEventListener("click", () => {
+        // End the call, close the WebRTC connection
+    });
+
+    connection.start().catch(err => console.error(err));
+
+
+</script>

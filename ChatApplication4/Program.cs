@@ -1,5 +1,6 @@
  
 using ChatApplication4.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions;
 using System;
@@ -54,6 +55,20 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Chat}/{action=Index}/{id?}");
+});
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<VideoChatHub>("/videoChatHub");
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    RequireHeaderSymmetry = false
 });
 
 app.Run();
