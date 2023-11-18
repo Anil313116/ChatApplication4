@@ -8,6 +8,7 @@
         public string Role { get; set; } // Doctor, Engineer, Politician, etc.
         public string ProfilePicture { get; set; } // Add this property for profile picture file path
         public string Gender { get; set; } // Add this property for profile picture file path
+        public bool IsOnline { get; set; }
 
     }
 }

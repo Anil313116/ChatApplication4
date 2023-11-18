@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojipicker.js">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojipicker.js">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet" />
 
 
 
@@ -25,8 +27,8 @@
     .chat-container {
         background-color: rgba(255, 255, 255, 0.8);
         border-radius: 10px;
-        padding: 20px;
-        margin: 20px;
+        padding: 100px;
+        margin: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     }
 
@@ -231,14 +233,35 @@
                     // Create a <div> element to hold the user icon, name, and role
                     var userElement = $("<div class='user-element'></div>");
                     if (data.gender[i] == "Female") {
-                        var userIcon = $("<i class='fa fa-female' style='font-size:24px'></i>");
+                        var userIcon = $("<div class='btn btn-warning'><i class='fa fa-female' style='font-size:24px'></i></div>");
                         data.gender[i] = "F";
                     }
                     else {
-                        var userIcon = $("<i class='fa fa-user'></i>");
+                        var userIcon = $("<div class='btn btn-warning'><i class='fa fa-user'></i></div>");
                         data.gender[i] = "M";
                     }
 
+                    if (data.isOnline[i]==true)
+                    {
+                        debugger;
+                        var userOnlineIcon = $("<div class='btn btn-primary'><i class='fa fa-circle fa-beat-fade fa-2xs' style='color: #0fca0c;font-size:14px' > </i></div>");
+                        var country = $("<div class='btn btn-danger'><span class='flag-icon flag-icon-in '</div>>")
+                        // Append the online icon to the user element
+                        userElement.append(userOnlineIcon);
+                        userElement.append(country);
+                        //data.isOnline[i] = "Online";
+
+                    }
+                    else
+                    {
+                        var userOnlineIcon = $("<div class='btn btn-primary'><i class='fa fa-circle fa-beat-fade fa-2xs' style='color: #e01a1a;font-size:14px '></i></div>");
+                        // Append the online icon to the user element
+                        var country = $("<div class='btn btn-danger'><span class='flag-icon flag-icon-in '</div>>")
+
+                        userElement.append(userOnlineIcon);
+                        userElement.append(country);
+
+                    }
 
                     // Create an icon element (adjust the icon class or source as needed)
 
@@ -252,12 +275,14 @@
                     var userNameSpan = $("<span class='btn btn-success'>" + data.userName[i] + "</span><br>");
                     // Create a span for the username and role
                     var userGenderLocationSpan = $("<span class='btn btn-secondary'>" + data.gender[i] + "," + data.location + " </span>");
+                   // var userIsActivespan = $("<span class='btn'>" + data.isOnline[i] + " </span>");
 
                     // Append the icon, username, and role to the user element
                     userElement.append(userIcon);
                     userElement.append(userNameSpan);
 
                     userElement.append(userGenderLocationSpan);
+                    //userElement.append(userIsActivespan);
 
                     // Append the user element to the user name div
                     userNameDiv.append(userElement);
@@ -286,3 +311,7 @@
 </script>
 
 <!-- ... (the rest of your HTML and JavaScript code) ... -->
+
+
+
+

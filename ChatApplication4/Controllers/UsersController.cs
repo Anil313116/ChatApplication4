@@ -164,10 +164,11 @@ namespace ChatApplication4.Controllers
 
             var onlineUserName=userName.Select(x=>x.Username).ToList();
             var onlineUserGender = userName.Select(x => x.Gender).ToList();
+            var onlineUserIsActive=userName.Select(x=>x.IsOnline).ToList();
 
             // Replace this with your actual data retrieval code
 
-            return Json(new { UserName = onlineUserName , Gender= onlineUserGender });
+            return Json(new { UserName = onlineUserName , Gender= onlineUserGender ,Location="Delhi",IsOnline=onlineUserIsActive});
         }
 
 
